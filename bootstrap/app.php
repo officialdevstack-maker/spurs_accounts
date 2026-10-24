@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             HandleInertiaRequests::class,
+            \App\Http\Middleware\EnsureActiveAccount::class,
         ]);
 
         // The shared SSO cookie is a signed JWT read by other Spurs apps, so it

@@ -23,7 +23,7 @@ Route::get('/', function () {
 })->name('home');
 
 // The signed-in "My Account" area.
-Route::middleware(['auth', 'account.active'])->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/me', [AccountController::class, 'index'])->name('me');
     Route::get('/me/personal', [AccountController::class, 'personal'])->name('me.personal');
     Route::get('/me/security', [AccountController::class, 'security'])->name('me.security');
@@ -46,7 +46,7 @@ Route::middleware(['auth', 'account.active'])->group(function () {
 
 // ---- Spurs SSO (first-party shared-cookie entry point) ----
 Route::get('/sso/continue', [\App\Http\Controllers\SsoController::class, 'continue'])
-    ->middleware(['auth', 'account.active'])
+    ->middleware('auth')
     ->name('sso.continue');
 
 // ---- OpenID Connect provider endpoints ----

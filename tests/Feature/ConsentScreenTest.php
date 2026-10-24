@@ -52,4 +52,24 @@ class ConsentScreenTest extends TestCase
                 ->where('user.email', $user->email)
         );
     }
+
+    public function test_suspended_account_cannot_authorize_a_new_application(): void
+    {
+        $user = User::factory()->create([
+            'suspended_at' => now(),
+            'suspension_reason' => 'Policy review',
+        ]);
+        $client = app(ClientRepository::class)->createAuthorizationCodeGrantClient(
+            'Spurs VTU',
+            ['http://localhost:3001/auth/spurs/callback'],
+            true,
+        );
+
+        $this->actingAs($user)->get('/oauth/authorize?'.http_build_query([
+            'client_id' => $client->getKey(),
+            'redirect_uri' => 'http://localhost:3001/auth/spurs/callback',
+            'response_type' => 'code',
+            'scope' => '',
+        ]))->assertRedirect('/login')->assertSessionHasErrors('email');
+    }
 }
