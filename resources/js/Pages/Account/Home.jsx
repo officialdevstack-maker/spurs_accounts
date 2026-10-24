@@ -40,7 +40,7 @@ export default function AccountHome({ user, kyc, appCount = 0 }) {
             {/* md/lg: summary cards */}
             <div className="only-desktop" style={{ display: 'grid', gap: 16 }}>
                 <SummaryCard
-                    Icon={User} title="Personal info" desc="Basic info like your name and email"
+                    Icon={User} title="Personal info" desc="Basic info like your name, username and email"
                     href="/me/personal" cta="Manage"
                     rows={[['Name', user.name], ['Username', `@${user.username}`], ['Email', user.email]]}
                 />

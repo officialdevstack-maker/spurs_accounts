@@ -24,7 +24,9 @@ class OidcTest extends TestCase
                 'scopes_supported',
             ])
             // `roles` carries platform roles/permissions + KYC tier to relying parties.
-            ->assertJsonPath('scopes_supported', ['openid', 'profile', 'email', 'roles']);
+            ->assertJsonPath('scopes_supported', ['openid', 'profile', 'email', 'roles'])
+            ->assertJsonPath('claims_supported.9', 'kyc_level')
+            ->assertJsonPath('claims_supported.10', 'kyc_status');
     }
 
     public function test_jwks_publishes_an_rsa_key(): void
@@ -67,6 +69,8 @@ class OidcTest extends TestCase
             ->assertJsonPath('name', 'Azuka')
             ->assertJsonPath('username', 'azuka')
             ->assertJsonPath('email', 'azuka@spurs.com.ng')
-            ->assertJsonPath('email_verified', true); // factory sets email_verified_at
+            ->assertJsonPath('email_verified', true) // factory sets email_verified_at
+            ->assertJsonPath('kyc_level', 0)
+            ->assertJsonPath('kyc_status', 'unverified');
     }
 }

@@ -28,7 +28,7 @@ class OidcController extends Controller
             'subject_types_supported' => ['public'],
             'id_token_signing_alg_values_supported' => ['RS256'],
             'scopes_supported' => ['openid', 'profile', 'email', 'roles'],
-            'claims_supported' => ['sub', 'name', 'username', 'account_type', 'phone_number', 'country', 'currency', 'email', 'email_verified', 'roles', 'permissions'],
+            'claims_supported' => ['sub', 'name', 'username', 'account_type', 'phone_number', 'country', 'currency', 'email', 'email_verified', 'kyc_level', 'kyc_status', 'roles', 'permissions'],
             'token_endpoint_auth_methods_supported' => ['client_secret_basic', 'client_secret_post'],
             'code_challenge_methods_supported' => ['S256', 'plain'],
         ]);

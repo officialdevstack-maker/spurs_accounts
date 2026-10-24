@@ -37,6 +37,7 @@ class SpursSession
             'name' => $user->name,
             'username' => $user->username,
             'email' => $user->email,
+            'email_verified' => $user->hasVerifiedEmail(),
             // RBAC travels with the identity so every first-party app and the
             // admin control plane can authorize without a round-trip to accounts.
             'roles' => $user->roleNames(),
@@ -44,6 +45,8 @@ class SpursSession
             // Verified KYC tier travels with the identity so Wallet/Pay can gate
             // limits and payouts without calling back to accounts.
             'kyc' => $user->kycLevel(),
+            'kyc_level' => $user->kycLevel(),
+            'kyc_status' => $user->kycStatus(),
             'iat' => $now,
             'exp' => $now + 60 * 60 * 24 * $days,
         ]));
