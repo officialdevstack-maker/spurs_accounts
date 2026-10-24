@@ -19,6 +19,7 @@ class AccountController extends Controller
         return [
             'user' => [
                 'name' => $user->name,
+                'username' => $user->username,
                 'email' => $user->email,
                 'account_type' => $user->account_type,
                 'phone' => $user->phone,
@@ -119,8 +120,20 @@ class AccountController extends Controller
     /** Update the user's personal info. */
     public function updateProfile(Request $request)
     {
+        if (is_string($request->input('username'))) {
+            $request->merge(['username' => \Illuminate\Support\Str::lower(trim($request->input('username')))]);
+        }
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => [
+                'required',
+                'string',
+                'alpha_dash',
+                'min:3',
+                'max:30',
+                \Illuminate\Validation\Rule::unique('users', 'username')->ignore($request->user()->getKey()),
+            ],
             'phone' => ['nullable', 'string', 'max:32', 'regex:/^\+?[0-9 ()-]{7,}$/'],
         ]);
 

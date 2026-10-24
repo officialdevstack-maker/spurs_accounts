@@ -12,6 +12,7 @@ const ACCOUNT_TYPES = [
 export default function Register({ referral }) {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
+        username: '',
         email: '',
         account_type: 'personal',
         phone: '',
@@ -64,6 +65,15 @@ export default function Register({ referral }) {
                     value={data.name}
                     onChange={(e) => setData('name', e.target.value)}
                     error={errors.name}
+                />
+                <Field
+                    label="Username"
+                    autoComplete="username"
+                    autoCapitalize="none"
+                    spellCheck={false}
+                    value={data.username}
+                    onChange={(e) => setData('username', e.target.value)}
+                    error={errors.username}
                 />
                 <Field
                     label="Email"

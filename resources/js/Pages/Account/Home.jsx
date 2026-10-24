@@ -42,7 +42,7 @@ export default function AccountHome({ user, kyc, appCount = 0 }) {
                 <SummaryCard
                     Icon={User} title="Personal info" desc="Basic info like your name and email"
                     href="/me/personal" cta="Manage"
-                    rows={[['Name', user.name], ['Email', user.email]]}
+                    rows={[['Name', user.name], ['Username', `@${user.username}`], ['Email', user.email]]}
                 />
                 <SummaryCard
                     Icon={BadgeCheck} title="Identity verification" desc="Verification unlocks full access"

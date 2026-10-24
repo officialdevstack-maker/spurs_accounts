@@ -24,7 +24,7 @@ class AccountTest extends TestCase
 
     public function test_account_page_renders_with_user(): void
     {
-        $user = User::factory()->create(['name' => 'Azuka Genius']);
+        $user = User::factory()->create(['name' => 'Azuka Genius', 'username' => 'azuka']);
 
         // /me is the overview now; connected apps live on their own page.
         $this->actingAs($user)->get('/me')
@@ -32,6 +32,7 @@ class AccountTest extends TestCase
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('Account/Home')
                 ->where('user.name', 'Azuka Genius')
+                ->where('user.username', 'azuka')
                 ->has('appCount'));
     }
 
@@ -48,12 +49,19 @@ class AccountTest extends TestCase
 
     public function test_user_can_update_their_name(): void
     {
-        $user = User::factory()->create(['name' => 'Old Name']);
+        $user = User::factory()->create(['name' => 'Old Name', 'username' => 'old_name']);
 
-        $this->actingAs($user)->put('/me/profile', ['name' => 'New Name'])
+        $this->actingAs($user)->put('/me/profile', [
+            'name' => 'New Name',
+            'username' => 'new_name',
+        ])
             ->assertRedirect();
 
-        $this->assertDatabaseHas('users', ['id' => $user->id, 'name' => 'New Name']);
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'name' => 'New Name',
+            'username' => 'new_name',
+        ]);
     }
 
     public function test_user_can_change_password_with_correct_current_password(): void

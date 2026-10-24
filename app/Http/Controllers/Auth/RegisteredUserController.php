@@ -9,6 +9,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 
@@ -43,8 +44,13 @@ class RegisteredUserController extends Controller
 
         $minLength = (int) \App\Support\Settings::get('registration.min_password_length');
 
+        if (is_string($request->input('username'))) {
+            $request->merge(['username' => Str::lower(trim($request->input('username')))]);
+        }
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'alpha_dash', 'min:3', 'max:30', 'unique:users,username'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email'],
             'account_type' => ['nullable', 'in:'.implode(',', User::ACCOUNT_TYPES)],
             'phone' => ['required', 'string', 'max:32', 'regex:/^\+?[0-9 ()-]{7,}$/'],
@@ -58,6 +64,7 @@ class RegisteredUserController extends Controller
 
         $user = User::create([
             'name' => $data['name'],
+            'username' => $data['username'],
             'email' => $data['email'],
             'account_type' => $data['account_type'] ?? 'personal',
             'phone' => $data['phone'],

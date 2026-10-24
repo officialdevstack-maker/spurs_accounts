@@ -54,13 +54,18 @@ class OidcTest extends TestCase
 
     public function test_userinfo_returns_claims_for_granted_scopes(): void
     {
-        $user = User::factory()->create(['name' => 'Azuka', 'email' => 'azuka@spurs.com.ng']);
+        $user = User::factory()->create([
+            'name' => 'Azuka',
+            'username' => 'azuka',
+            'email' => 'azuka@spurs.com.ng',
+        ]);
         Passport::actingAs($user, ['openid', 'profile', 'email']);
 
         $this->getJson('/oauth/userinfo')
             ->assertStatus(200)
             ->assertJsonPath('sub', (string) $user->getKey())
             ->assertJsonPath('name', 'Azuka')
+            ->assertJsonPath('username', 'azuka')
             ->assertJsonPath('email', 'azuka@spurs.com.ng')
             ->assertJsonPath('email_verified', true); // factory sets email_verified_at
     }

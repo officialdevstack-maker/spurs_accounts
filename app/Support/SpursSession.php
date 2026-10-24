@@ -35,6 +35,7 @@ class SpursSession
         $payload = self::b64(json_encode([
             'sub' => (string) $user->getKey(),
             'name' => $user->name,
+            'username' => $user->username,
             'email' => $user->email,
             // RBAC travels with the identity so every first-party app and the
             // admin control plane can authorize without a round-trip to accounts.

@@ -4,7 +4,11 @@ import AccountLayout from '@/Components/AccountLayout';
 import Field from '@/Components/Field';
 
 export default function Personal({ user, kyc }) {
-    const { data, setData, put, processing, errors, recentlySuccessful } = useForm({ name: user.name, phone: user.phone || '' });
+    const { data, setData, put, processing, errors, recentlySuccessful } = useForm({
+        name: user.name,
+        username: user.username,
+        phone: user.phone || '',
+    });
     const save = (e) => { e.preventDefault(); put('/me/profile', { preserveScroll: true }); };
 
     return (
@@ -18,6 +22,15 @@ export default function Personal({ user, kyc }) {
                 <div className="acct-card__head"><h2>Your details</h2><p>Shown to apps you sign in to</p></div>
                 <form onSubmit={save} noValidate style={{ marginTop: 12 }}>
                     <Field label="Name" value={data.name} onChange={(e) => setData('name', e.target.value)} error={errors.name} />
+                    <Field
+                        label="Username"
+                        autoComplete="username"
+                        autoCapitalize="none"
+                        spellCheck={false}
+                        value={data.username}
+                        onChange={(e) => setData('username', e.target.value)}
+                        error={errors.username}
+                    />
                     <Field label="Phone number" type="tel" value={data.phone} onChange={(e) => setData('phone', e.target.value)} error={errors.phone} />
                     <div className="form-actions">
                         {recentlySuccessful && <span className="saved-note"><Check size={15} /> Saved</span>}

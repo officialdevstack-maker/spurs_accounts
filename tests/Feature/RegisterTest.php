@@ -22,6 +22,7 @@ class RegisterTest extends TestCase
     {
         $response = $this->post('/register', [
             'name' => 'Ada Lovelace',
+            'username' => 'Ada_Lovelace',
             'email' => 'ada@spurs.com.ng',
             'phone' => '+2348012345678',
             'password' => 'Password123!',
@@ -30,13 +31,34 @@ class RegisterTest extends TestCase
 
         $response->assertRedirect('/');
         $this->assertAuthenticated();
-        $this->assertDatabaseHas('users', ['email' => 'ada@spurs.com.ng', 'name' => 'Ada Lovelace']);
+        $this->assertDatabaseHas('users', [
+            'email' => 'ada@spurs.com.ng',
+            'name' => 'Ada Lovelace',
+            'username' => 'ada_lovelace',
+        ]);
+    }
+
+    public function test_registration_requires_a_unique_username(): void
+    {
+        User::factory()->create(['username' => 'taken']);
+
+        $this->post('/register', [
+            'name' => 'New User',
+            'username' => 'TAKEN',
+            'email' => 'new@spurs.com.ng',
+            'phone' => '+2348012345678',
+            'password' => 'Password123!',
+            'password_confirmation' => 'Password123!',
+        ])->assertSessionHasErrors('username');
+
+        $this->assertDatabaseMissing('users', ['email' => 'new@spurs.com.ng']);
     }
 
     public function test_registration_requires_matching_passwords(): void
     {
         $this->post('/register', [
             'name' => 'Bad Match',
+            'username' => 'bad_match',
             'email' => 'bad@spurs.com.ng',
             'phone' => '+2348012345678',
             'password' => 'Password123!',
