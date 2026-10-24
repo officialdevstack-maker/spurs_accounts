@@ -21,6 +21,7 @@ Route::middleware('internal')->prefix('admin')->group(function () {
     Route::get('/users', [AdminApiController::class, 'users']);
     Route::get('/users/{id}', [AdminApiController::class, 'user']);
     Route::post('/users/{id}/roles', [AdminApiController::class, 'assignRoles']);
+    Route::put('/users/{id}/suspension', [AdminApiController::class, 'setSuspension']);
 
     Route::get('/roles', [AdminApiController::class, 'roles']);
     Route::post('/roles', [AdminApiController::class, 'createRole']);

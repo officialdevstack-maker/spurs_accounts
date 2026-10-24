@@ -33,6 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Guards the internal service-to-service admin API.
         $middleware->alias([
             'internal' => \App\Http\Middleware\EnsureInternalSecret::class,
+            'account.active' => \App\Http\Middleware\EnsureActiveAccount::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

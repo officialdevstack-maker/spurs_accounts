@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use App\Support\SpursSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia;
 use Tests\TestCase;
@@ -34,6 +35,17 @@ class AccountTest extends TestCase
                 ->where('user.name', 'Azuka Genius')
                 ->where('user.username', 'azuka')
                 ->has('appCount'));
+    }
+
+    public function test_shared_session_includes_verification_claims(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $payload = explode('.', SpursSession::issue($user))[1];
+        $claims = json_decode(base64_decode(strtr($payload, '-_', '+/')), true, flags: JSON_THROW_ON_ERROR);
+
+        $this->assertFalse($claims['email_verified']);
+        $this->assertSame(0, $claims['kyc_level']);
+        $this->assertSame('unverified', $claims['kyc_status']);
     }
 
     public function test_connected_apps_has_its_own_page(): void

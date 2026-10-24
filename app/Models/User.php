@@ -158,6 +158,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'country',
         'currency',
+        'suspended_at',
+        'suspension_reason',
         'password',
     ];
 
@@ -184,6 +186,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'trust_updated_at' => 'datetime',
+            'suspended_at' => 'datetime',
             'trust_score' => 'integer',
             'password' => 'hashed',
         ];

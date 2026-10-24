@@ -78,12 +78,40 @@ class AdminApiController extends Controller
             'created_at' => $user->created_at?->toIso8601String(),
             'roles' => $user->roles->map(fn (Role $r) => ['name' => $r->name, 'label' => $r->label]),
             'permissions' => $user->permissionKeys(),
+            'suspended_at' => $user->suspended_at?->toIso8601String(),
+            'suspension_reason' => $user->suspension_reason,
             'connected_apps' => $user->tokens()->where('revoked', false)->distinct('client_id')->count('client_id'),
             'security_events' => $user->securityEvents()->limit(12)->get()
                 ->map(fn (SecurityEvent $e) => [
                     'type' => $e->type, 'label' => $e->label(), 'ip' => $e->ip,
                     'device' => $e->device, 'at' => $e->created_at?->toIso8601String(),
                 ]),
+        ]);
+    }
+
+    /** Suspend or reinstate account sign-in and revoke existing Accounts API tokens. */
+    public function setSuspension(Request $request, int $id)
+    {
+        $data = $request->validate([
+            'suspended' => ['required', 'boolean'],
+            'reason' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $user = User::findOrFail($id);
+        if ($data['suspended']) {
+            $user->forceFill([
+                'suspended_at' => $user->suspended_at ?? now(),
+                'suspension_reason' => trim((string) ($data['reason'] ?? '')) ?: 'Suspended by an administrator',
+            ])->save();
+            $user->tokens()->where('revoked', false)->update(['revoked' => true]);
+        } else {
+            $user->forceFill(['suspended_at' => null, 'suspension_reason' => null])->save();
+        }
+
+        return response()->json([
+            'ok' => true,
+            'suspended_at' => $user->suspended_at?->toIso8601String(),
+            'suspension_reason' => $user->suspension_reason,
         ]);
     }
 

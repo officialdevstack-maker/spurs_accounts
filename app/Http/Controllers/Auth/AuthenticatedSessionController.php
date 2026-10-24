@@ -50,6 +50,16 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
+        if ($request->user()->suspended_at) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'This account is suspended. Please contact support.',
+            ]);
+        }
+
         $request->session()->regenerate();
 
         // Score this sign-in against the account's own history (new IP/device/
